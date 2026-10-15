@@ -1,47 +1,59 @@
-import {
-    listContacts,
-    getContactById,
-    removeContact,
-    addContact,
-    updateById,
-} from "../services/contactsServices.js";
+import * as contactsService from "../services/contactsServices.js";
+import HttpError from "../helpers/HttpError.js";
 
-export const getAllContacts = async (req, res) => {
-    const result = await listContacts();
-    res.status(200).json(result);
-};
-
-export const getOneContact = async (req, res) => {
-    const contact = await getContactById(req.params.id)
-    if (contact) {
-        res.status(200).json(contact);
-    } else {
-        res.status(404).json({"message": "Not found"})
+export const getAllContacts = async (req, res,next) => {
+    try {
+        const result = await contactsService.listContacts();
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
     }
+
 };
 
-export const deleteContact = async (req, res) => {
-    const contact = await removeContact(req.params.id)
-    if (contact) {
+export const getOneContact = async (req, res,next) => {
+    try {
+        const contact = await contactsService.getContactById(req.params.id)
+        if (!contact) {
+           return next( HttpError(404, "Not found"))
+        }
         res.status(200).json(contact)
-    } else {
-        res.status(404).json({"message": "Not found"})
+    } catch (error) {
+        next(error)
     }
-};
-
-export const createContact = async (req, res) => {
-    const {name, email, phone} = req.body;
-    const contact = await addContact(name, email, phone);
-    res.status(201).json(contact);
 
 };
 
-export const updateContact = async (req, res) => {
-    if(Object.keys(req.body).length === 0){
-        res.status(400).json({"message": "Body must have at least one field"})
+export const deleteContact = async (req, res,next) => {
+    try {
+        const contact = await contactsService.removeContact(req.params.id);
+        if (!contact) {
+           return next( HttpError(404, "Not found"))
+        }
+        res.status(200).json(contact)
+    } catch (error) {
+   next(error);
     }
-    const contact=await updateB
-    if(!contact){
-        res.status(404).json({"message": "Not found"})
+};
+
+export const createContact = async (req, res,next) => {
+    try {
+        const {name, email, phone} = req.body;
+        const contact = await contactsService.addContact(name, email, phone);
+        res.status(201).json(contact);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const updateContact = async (req, res,next) => {
+    try {
+        const contact = await contactsService.updateContact(req.params.id, req.body);
+        if (!contact) {
+            return next( HttpError(404, "Not found"))
+        }
+        res.status(200).json(contact);
+    } catch (error) {
+        next(error);
     }
 };
