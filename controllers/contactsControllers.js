@@ -22,16 +22,16 @@ const createContact = async (req, res) => {
 
 const updateContact = async (req, res) => {
     const {contactId} = req.params;
-    const contact = await Contact.findByIdAndUpdate(contactId, req.body, {new: true});
+    const contact = await Contact.findByIdAndUpdate(contactId, req.body, {new: true,runValidators: true});
     if (!contact) {
         throw HttpError(404, "Not found")
     }
     res.status(200).json(contact);
 };
 
-const updateStatusContact  = async (req, res) => {
+const updateStatusContact = async (req, res) => {
     const {contactId} = req.params;
-    const contact = await Contact.findByIdAndUpdate(contactId, req.body, {new: true})
+    const contact = await Contact.findByIdAndUpdate(contactId, req.body, {new: true,runValidators: true})
     if (!contact) {
         throw HttpError(404, "Not found")
     }
@@ -44,7 +44,7 @@ const deleteContact = async (req, res) => {
     if (!contact) {
         throw HttpError(404, "Not found")
     }
-    res.status(200).json(contact)
+    res.status(200).json({ message: "contact deleted" });
 };
 
 export default {
@@ -52,6 +52,6 @@ export default {
     getOneContact: ctrlWrapper(getOneContact),
     createContact: ctrlWrapper(createContact),
     updateContact: ctrlWrapper(updateContact),
-    updateStatusContact : ctrlWrapper(updateStatusContact ),
+    updateStatusContact: ctrlWrapper(updateStatusContact),
     deleteContact: ctrlWrapper(deleteContact),
 }

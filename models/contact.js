@@ -18,23 +18,38 @@ const contactSchema = new Schema({
         type: Boolean,
         default: false,
     },
-})
+}, {versionKey: false, timestamps: true})
 
 contactSchema.post('save', handleMongooseError);
 
-export const createContactSchema = Joi.object({
+const createContactSchema = Joi.object({
     name: Joi.string().min(3).max(30).required(),
     email: Joi.string().email().required(),
     favorite: Joi.boolean(),
     phone: Joi.string().pattern(/^\(\d{3}\) \d{3}-\d{4}$/).required(),
 })
 
-export const updateFavoriteSchema = Joi.object({
-    favorite: Joi.boolean().required(),
+const updateContactSchema = Joi.object({
+    name: Joi.string().min(3).max(30),
+    email: Joi.string().email(),
+    phone: Joi.string().pattern(/^\(\d{3}\) \d{3}-\d{4}$/),
+    favorite: Joi.boolean(),
+})
+    .min(1)
+    .messages({
+        "object.min": "missing fields",
+    });
+
+const updateFavoriteSchema = Joi.object({
+    favorite: Joi.boolean().required().messages({
+        "any.required": "missing field favorite",
+    }),
 });
+
 export const schemas = {
     createContactSchema,
-    updateFavoriteSchema
+    updateContactSchema,
+    updateFavoriteSchema,
 }
 
 export const Contact = model('contact', contactSchema)
