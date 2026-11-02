@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import {HttpError, ctrlWrapper} from "../helpers/index.js";
 
 import {User} from "../models/user.js";
+import {Contact} from "../models/contact.js";
 
 const {SECRET_KEY} = process.env;
 
@@ -46,7 +47,11 @@ const login = async (req, res) => {
     await User.findByIdAndUpdate(user._id, {token})
 
     res.json({
-        token
+        token,
+        user: {
+            email: user.email,
+            subscription: user.subscription
+        }
     })
 }
 
@@ -66,9 +71,19 @@ const getCurrent = async (req, res) => {
     })
 }
 
+const updateUserSubscription = async (req, res) => {
+    const {_id} = req.user;
+    const user = await User.findByIdAndUpdate(_id, req.body, {returnDocument: 'after', runValidators: true})
+    if (!user) {
+        throw HttpError(404, "Not found")
+    }
+    res.status(200).json(user);
+};
+
 export default {
     register: ctrlWrapper(register),
     login: ctrlWrapper(login),
     logout: ctrlWrapper(logout),
     getCurrent: ctrlWrapper(getCurrent),
+    updateUserSubscription: ctrlWrapper(updateUserSubscription)
 }

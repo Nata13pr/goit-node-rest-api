@@ -2,6 +2,7 @@ import {Schema, model} from "mongoose";
 import Joi from "joi";
 import {handleMongooseError} from "../helpers/index.js";
 
+const subscriptionList = ['starter', 'pro', 'business'];
 
 const userSchema = new Schema({
     password: {
@@ -15,7 +16,7 @@ const userSchema = new Schema({
     },
     subscription: {
         type: String,
-        enum: ["starter", "pro", "business"],
+        enum: subscriptionList,
         default: "starter"
     },
     token: {
@@ -31,8 +32,15 @@ const registerAndLoginSchema = Joi.object({
     password: Joi.string().min(6).required(),
 })
 
+const updateSubscriptionSchema = Joi.object({
+    subscription: Joi.string().valid(...subscriptionList).required().messages({
+        "any.required": "missing field subscription",
+    }),
+});
+
 export const schemas = {
     registerAndLoginSchema,
+    updateSubscriptionSchema
 }
 
 export const User = model('user', userSchema);

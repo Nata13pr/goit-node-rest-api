@@ -15,4 +15,6 @@ usersRouter.post('/logout', authenticate, usersControllers.logout)
 
 usersRouter.get('/current', authenticate, usersControllers.getCurrent)
 
+usersRouter.patch('/', authenticate, validateBody(schemas.updateSubscriptionSchema), usersControllers.updateUserSubscription)
+
 export default usersRouter;
