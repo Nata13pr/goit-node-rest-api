@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import {HttpError, ctrlWrapper} from "../helpers/index.js";
 
 import {User} from "../models/user.js";
-import {Contact} from "../models/contact.js";
 
 const {SECRET_KEY} = process.env;
 
@@ -77,7 +76,10 @@ const updateUserSubscription = async (req, res) => {
     if (!user) {
         throw HttpError(404, "Not found")
     }
-    res.status(200).json(user);
+    res.status(200).json({
+        email: user.email,
+        subscription: user.subscription,
+    });
 };
 
 export default {
