@@ -1,7 +1,7 @@
 import express from "express";
 
 import usersControllers from "../controllers/usersControllers.js";
-import {validateBody} from "../middlewares/index.js";
+import {upload, validateBody} from "../middlewares/index.js";
 import {schemas} from "../models/user.js";
 import {authenticate} from "../middlewares/authenticate.js";
 
@@ -16,5 +16,7 @@ usersRouter.post('/logout', authenticate, usersControllers.logout)
 usersRouter.get('/current', authenticate, usersControllers.getCurrent)
 
 usersRouter.patch('/', authenticate, validateBody(schemas.updateSubscriptionSchema), usersControllers.updateUserSubscription)
+
+usersRouter.patch('/avatars', authenticate, upload.single("avatar"), usersControllers.updateAvatar)
 
 export default usersRouter;
