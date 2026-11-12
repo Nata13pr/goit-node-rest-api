@@ -91,16 +91,21 @@ const updateUserSubscription = async (req, res) => {
 
 
 const updateAvatar = async (req, res) => {
+    if (!req.file) {
+        throw HttpError(400, "Avatar file is required");
+    }
     const {_id} = req.user;
     const {path: tmpUpload, originalname} = req.file;
     const filename = `${_id}_${originalname}`;
     const resultUpload = path.join(avatarsDir, filename);
+
     try {
         const image = await Jimp.read(tmpUpload)
-        image.resize({ w: 250, h: 250 });
+        image.resize({w: 250, h: 250});
         await image.write(resultUpload)
         await fs.unlink(tmpUpload);
-        const avatarURL = `avatars/${filename}`
+        const avatarURL = `/avatars/${filename}`
+        await User.findByIdAndUpdate(_id, {avatarURL})
 
         res.status(200).json({
             avatarURL
