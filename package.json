@@ -2,6 +2,7 @@
   "name": "goit-node-rest-api",
   "type": "module",
   "scripts": {
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "start": "node ./app.js",
     "dev": "nodemon ./app.js"
   },
@@ -20,6 +21,11 @@
     "nanoid": "^6.0.2"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
+    "jest": "^30.5.2",
     "nodemon": "^3.0.2"
+  },
+  "jest": {
+    "transform": {}
   }
 }
